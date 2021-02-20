@@ -15,72 +15,54 @@ public class app {
     private JButton fontButtonPlus;
     private JButton fontButtonMinus;
     private JToolBar Toolbar;
-    private JTextPane textPane1;
+    private JTextPane textPanel;
     private JButton saveButton;
 
     private int fontSize;
     private File activeFile = null;
 
     public app() {
-        openButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                JFileChooser chooser = new JFileChooser();
+        openButton.addActionListener(actionEvent -> {
+            JFileChooser chooser = new JFileChooser();
 
-                if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-                    File file = chooser.getSelectedFile();
-                    activeFile = file;
+            if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+                File file = chooser.getSelectedFile();
+                activeFile = file;
 
-                    frame.setTitle("NoTE19pad [*editing " + file.getName() + "]");
+                frame.setTitle(String.format("NoTE19pad [*editing %s]", file.getName()));
 
-                    Scanner myReader = null;
-                    String fileContent = "";
-                    try {
-                        myReader = new Scanner(file);
+                Scanner reader;
+                StringBuilder fileContent = new StringBuilder();
 
-                        while (myReader.hasNextLine()) {
-                            String data = myReader.nextLine();
-                            fileContent += data+"\n";
-                        }
+                try {
+                    reader = new Scanner(file);
+                    while(reader.hasNextLine()) fileContent.append(reader.nextLine()).append("\n");
 
-                        myReader.close();
-                        textPane1.setText(fileContent);
-
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-
+                    reader.close();
+                    textPanel.setText(fileContent.toString());
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
                 }
             }
         });
-        fontButtonPlus.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                setFontSize(++fontSize);
-            }
-        });
-        fontButtonMinus.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                setFontSize(--fontSize);
-            }
-        });
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                if(activeFile != null) {
-                    try {
-                        saveFile(activeFile, textPane1.getText());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null, "Saved unnamed.txt to desktop");
-                    try {
-                        saveFile(null, textPane1.getText());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+
+        fontButtonPlus.addActionListener(actionEvent -> setFontSize(++fontSize));
+
+        fontButtonMinus.addActionListener(actionEvent -> setFontSize(--fontSize));
+
+        saveButton.addActionListener(actionEvent -> {
+            if(activeFile != null) {
+                try {
+                    saveFile(activeFile, textPanel.getText());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Saved unnamed.txt to desktop");
+                try {
+                    saveFile(null, textPanel.getText());
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -88,7 +70,7 @@ public class app {
 
     public void setFontSize(int size) {
         Font font = new Font("Comic Sans MS", Font.TRUETYPE_FONT, size);
-        this.textPane1.setFont(font);
+        this.textPanel.setFont(font);
         this.fontSize = size;
     }
 
