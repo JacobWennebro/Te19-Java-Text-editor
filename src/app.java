@@ -61,7 +61,7 @@ public class app {
                     JOptionPane.showMessageDialog(null, "Saved unnamed.txt to desktop.");
                 } catch(IOException e) {
                     e.printStackTrace();
-                    JOptionPane.showMessageDialog(null, "There was an issuing saving unnamed.txt to your desktop.");
+                    JOptionPane.showMessageDialog(null, "There was an issue saving unnamed.txt to your desktop.");
                 }
             }
         });
