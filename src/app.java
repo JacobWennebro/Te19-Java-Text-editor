@@ -74,16 +74,13 @@ public class app {
     }
 
     public void saveFile(File file, String contents) throws IOException {
-        FileWriter myWriter;
+        FileWriter writer;
 
-        if(file == null) {
-            myWriter = new FileWriter(new File(System.getProperty("user.home"), "unnamed.txt"));
-        } else {
-            myWriter = new FileWriter(file);
-        }
+        if(file == null) writer = new FileWriter(new File(System.getProperty("user.home"), "unnamed.txt"));
+        else writer = new FileWriter(file);
 
-        myWriter.write(contents);
-        myWriter.close();
+        writer.write(contents);
+        writer.close();
     }
 
     public static void main(String[] args) {
