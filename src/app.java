@@ -1,7 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -15,7 +13,7 @@ public class app {
     private JButton fontButtonPlus;
     private JButton fontButtonMinus;
     private JToolBar Toolbar;
-    private JTextPane textPanel;
+    private JTextPane textPane;
     private JButton saveButton;
 
     private int fontSize;
@@ -25,7 +23,7 @@ public class app {
         openButton.addActionListener(actionEvent -> {
             JFileChooser chooser = new JFileChooser();
 
-            if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+            if(chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
                 File file = chooser.getSelectedFile();
                 activeFile = file;
 
@@ -39,7 +37,7 @@ public class app {
                     while(reader.hasNextLine()) fileContent.append(reader.nextLine()).append("\n");
 
                     reader.close();
-                    textPanel.setText(fileContent.toString());
+                    textPane.setText(fileContent.toString());
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -53,24 +51,25 @@ public class app {
         saveButton.addActionListener(actionEvent -> {
             if(activeFile != null) {
                 try {
-                    saveFile(activeFile, textPanel.getText());
-                } catch (IOException e) {
+                    saveFile(activeFile, textPane.getText());
+                } catch(IOException e) {
                     e.printStackTrace();
                 }
             } else {
-                JOptionPane.showMessageDialog(null, "Saved unnamed.txt to desktop");
                 try {
-                    saveFile(null, textPanel.getText());
-                } catch (IOException e) {
+                    saveFile(null, textPane.getText());
+                    JOptionPane.showMessageDialog(null, "Saved unnamed.txt to desktop.");
+                } catch(IOException e) {
                     e.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "There was an issuing saving unnamed.txt to your desktop.");
                 }
             }
         });
     }
 
     public void setFontSize(int size) {
-        Font font = new Font("Comic Sans MS", Font.TRUETYPE_FONT, size);
-        this.textPanel.setFont(font);
+        Font font = new Font("Comic Sans MS", Font.PLAIN, size);
+        this.textPane.setFont(font);
         this.fontSize = size;
     }
 
