@@ -20,6 +20,7 @@ public class app {
     private File activeFile = null;
 
     public app() {
+
         openButton.addActionListener(actionEvent -> {
             JFileChooser chooser = new JFileChooser();
 
@@ -45,7 +46,6 @@ public class app {
         });
 
         fontButtonPlus.addActionListener(actionEvent -> setFontSize(++fontSize));
-
         fontButtonMinus.addActionListener(actionEvent -> setFontSize(--fontSize));
 
         saveButton.addActionListener(actionEvent -> {
@@ -76,7 +76,7 @@ public class app {
     public void saveFile(File file, String contents) throws IOException {
         FileWriter writer;
 
-        if(file == null) writer = new FileWriter(new File(System.getProperty("user.home"), "unnamed.txt"));
+        if(file == null) writer = new FileWriter(new File(System.getProperty("user.home")+"\\Desktop", "unnamed.txt"));
         else writer = new FileWriter(file);
 
         writer.write(contents);
