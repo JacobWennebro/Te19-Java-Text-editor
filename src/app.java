@@ -1,7 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -15,94 +13,74 @@ public class app {
     private JButton fontButtonPlus;
     private JButton fontButtonMinus;
     private JToolBar Toolbar;
-    private JTextPane textPane1;
+    private JTextPane textPane;
     private JButton saveButton;
 
     private int fontSize;
     private File activeFile = null;
 
     public app() {
-        openButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                JFileChooser chooser = new JFileChooser();
+        openButton.addActionListener(actionEvent -> {
+            JFileChooser chooser = new JFileChooser();
 
-                if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-                    File file = chooser.getSelectedFile();
-                    activeFile = file;
+            if(chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+                File file = chooser.getSelectedFile();
+                activeFile = file;
 
-                    frame.setTitle("NoTE19pad [*editing " + file.getName() + "]");
+                frame.setTitle(String.format("NoTE19pad [*editing %s]", file.getName()));
 
-                    Scanner myReader = null;
-                    String fileContent = "";
-                    try {
-                        myReader = new Scanner(file);
+                Scanner reader;
+                StringBuilder fileContent = new StringBuilder();
 
-                        while (myReader.hasNextLine()) {
-                            String data = myReader.nextLine();
-                            fileContent += data+"\n";
-                        }
+                try {
+                    reader = new Scanner(file);
+                    while(reader.hasNextLine()) fileContent.append(reader.nextLine()).append("\n");
 
-                        myReader.close();
-                        textPane1.setText(fileContent);
-
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-
+                    reader.close();
+                    textPane.setText(fileContent.toString());
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
                 }
             }
         });
-        fontButtonPlus.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                setFontSize(++fontSize);
-            }
-        });
-        fontButtonMinus.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                setFontSize(--fontSize);
-            }
-        });
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                if(activeFile != null) {
-                    try {
-                        saveFile(activeFile, textPane1.getText());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(null, "Saved unnamed.txt to desktop");
-                    try {
-                        saveFile(null, textPane1.getText());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+
+        fontButtonPlus.addActionListener(actionEvent -> setFontSize(++fontSize));
+
+        fontButtonMinus.addActionListener(actionEvent -> setFontSize(--fontSize));
+
+        saveButton.addActionListener(actionEvent -> {
+            if(activeFile != null) {
+                try {
+                    saveFile(activeFile, textPane.getText());
+                } catch(IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    saveFile(null, textPane.getText());
+                    JOptionPane.showMessageDialog(null, "Saved unnamed.txt to desktop.");
+                } catch(IOException e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "There was an issue saving unnamed.txt to your desktop.");
                 }
             }
         });
     }
 
     public void setFontSize(int size) {
-        Font font = new Font("Comic Sans MS", Font.TRUETYPE_FONT, size);
-        this.textPane1.setFont(font);
+        Font font = new Font("Comic Sans MS", Font.PLAIN, size);
+        this.textPane.setFont(font);
         this.fontSize = size;
     }
 
     public void saveFile(File file, String contents) throws IOException {
-        FileWriter myWriter;
+        FileWriter writer;
 
-        if(file == null) {
-            myWriter = new FileWriter(new File(System.getProperty("user.home"), "unnamed.txt"));
-        } else {
-            myWriter = new FileWriter(file);
-        }
+        if(file == null) writer = new FileWriter(new File(System.getProperty("user.home"), "unnamed.txt"));
+        else writer = new FileWriter(file);
 
-        myWriter.write(contents);
-        myWriter.close();
+        writer.write(contents);
+        writer.close();
     }
 
     public static void main(String[] args) {
@@ -110,8 +88,7 @@ public class app {
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-        }
+        } catch (Exception ignored) { }
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1300,800);
